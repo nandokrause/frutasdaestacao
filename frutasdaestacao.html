@@ -50,7 +50,7 @@ header p{
     box-shadow:0 2px 15px rgba(0,0,0,.08);
 
     display:grid;
-    grid-template-columns:1fr 1fr auto;
+    grid-template-columns:1fr 1fr 1fr auto;
     gap:15px;
 }
 
@@ -328,6 +328,10 @@ button:hover{
 
         <option value="PA">Pará</option>
         <option value="AM">Amazonas</option>
+    </select>
+
+    <select id="fruta">
+        <option value="">Todas as frutas</option>
     </select>
 
     <button onclick="pesquisar()">
@@ -866,38 +870,57 @@ function mesNaSafra(mes,inicio,fim){
     return mes >= inicio || mes <= fim;
 }
 
+function preencherFiltroFrutas(){
+    const seletor = document.getElementById("fruta");
+
+    frutas
+        .slice()
+        .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
+        .forEach(fruta => {
+            const opcao = document.createElement("option");
+            opcao.value = fruta.nome;
+            opcao.textContent = fruta.nome;
+            seletor.appendChild(opcao);
+        });
+}
+
 function pesquisar(){
 
     const data = document.getElementById("data").value;
     const estado = document.getElementById("estado").value;
+    const frutaSelecionada = document.getElementById("fruta").value;
 
     const resultado = document.getElementById("resultado");
 
     resultado.innerHTML = "";
 
-    if(!data){
+    // Ao escolher uma fruta específica, a consulta não depende da data.
+    // O estado continua opcional e pode ser usado para verificar produtores.
+    if(!frutaSelecionada && !data){
 
         resultado.innerHTML =
-        '<div class="vazio">📅 Selecione uma data para consultar as frutas da estação.</div>';
+        '<div class="vazio">📅 Selecione uma data ou escolha uma fruta específica.</div>';
 
         return;
     }
 
-    const mes = new Date(data).getMonth() + 1;
+    const mes = data ? new Date(data).getMonth() + 1 : null;
 
     const frutasEncontradas = frutas.filter(fruta => {
 
-        const emSafra = mesNaSafra(
-            mes,
-            fruta.inicio,
-            fruta.fim
-        );
+        const frutaValida =
+            !frutaSelecionada ||
+            fruta.nome === frutaSelecionada;
+
+        const emSafra =
+            frutaSelecionada ||
+            mesNaSafra(mes, fruta.inicio, fruta.fim);
 
         const estadoValido =
             !estado ||
             fruta.estados.includes(estado);
 
-        return emSafra && estadoValido;
+        return frutaValida && emSafra && estadoValido;
 
     });
 
@@ -911,11 +934,9 @@ function pesquisar(){
 
     frutasEncontradas.forEach(fruta => {
         
-        const status = statusSafra(
-            mes,
-            fruta.inicio,
-            fruta.fim
-        );
+        const status = frutaSelecionada
+            ? null
+            : statusSafra(mes, fruta.inicio, fruta.fim);
 
         resultado.innerHTML += `
         <div class="card">
@@ -926,12 +947,23 @@ function pesquisar(){
 
             <h3>${fruta.nome}</h3>
 
+            ${status ? `
             <div class="${status.classe}">
                 ${status.texto}
             </div>
+            ` : `
+            <div class="status-normal">
+                🔎 Consulta direta da fruta
+            </div>
+            `}
 
             <div class="safra">
                 📅 Safra: ${meses[fruta.inicio]} até ${meses[fruta.fim]}
+                ${frutaSelecionada && data ? `
+                    <br>${mesNaSafra(mes, fruta.inicio, fruta.fim)
+                        ? statusSafra(mes, fruta.inicio, fruta.fim).texto
+                        : "❌ Fora da safra na data selecionada"}
+                ` : ""}
             </div>
 
             <div class="estado">
@@ -947,6 +979,11 @@ function pesquisar(){
         `;
     });
 }
+
+// Inicializa o filtro de frutas; a data continua opcional para consulta direta.
+preencherFiltroFrutas();
+document.getElementById("data").value =
+    new Date().toLocaleDateString("en-CA");
 
 </script>
 
