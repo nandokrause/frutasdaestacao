@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frutas em Safra no Brasil</title>
+
+<style>
+:root{
+    --cor1:#2e7d32;
+    --cor2:#43a047;
+    --fundo:#f5f7fa;
+    --card:#ffffff;
+}
+
+body{
+    margin:0;
+    font-family:Segoe UI, Arial, sans-serif;
+    background:var(--fundo);
+}
+
+header{
+    background:linear-gradient(135deg,var(--cor1),var(--cor2));
+    color:white;
+    padding:30px;
+    text-align:center;
+}
+
+header h1{
+    margin:0;
+}
+
+.filtros{
+    max-width:900px;
+    margin:25px auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 2px 15px rgba(0,0,0,.08);
+
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:15px;
+}
+
+input, select{
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+button{
+    background:var(--cor1);
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:12px 20px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#1b5e20;
+}
+
+.resultados{
+    max-width:1200px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:var(--card);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+    transition:.2s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+}
+
+.icone{
+    font-size:50px;
+}
+
+.card h3{
+    margin:10px 0;
+    color:#2e7d32;
+}
+
+.estado{
+    font-size:13px;
+    color:#666;
+}
+
+.vazio{
+    text-align:center;
+    color:#666;
+    margin-top:30px;
+    font-size:18px;
+}
+
+@media(max-width:700px){
+    .filtros{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🍇 Frutas em Safra no Brasil</h1>
+    <p>Descubra quais frutas estão em melhor época para consumo</p>
+</header>
+
+<div class="filtros">
+
+    <input type="date" id="data">
+
+    <select id="estado">
+        <option value="">Todos os estados</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="PR">Paraná</option>
+        <option value="SP">São Paulo</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="ES">Espírito Santo</option>
+        <option value="BA">Bahia</option>
+        <option value="PE">Pernambuco</option>
+        <option value="CE">Ceará</option>
+        <option value="RN">Rio Grande do Norte</option>
+        <option value="PA">Pará</option>
+        <option value="AM">Amazonas</option>
+    </select>
+
+    <button onclick="pesquisar()">
+        Pesquisar
+    </button>
+
+</div>
+
+<div id="resultado" class="resultados"></div>
+
+<script>
+
+const frutas = [
+
+{
+nome:"Uva",
+icone:"🍇",
+inicio:12,
+fim:3,
+estados:["RS","SC","PR","SP","BA","PE"],
+dica:"Rica em antioxidantes e resveratrol."
+},
+
+{
+nome:"Maçã",
+icone:"🍎",
+inicio:1,
+fim:4,
+estados:["RS","SC"],
+dica:"Boa fonte de fibras."
+},
+
+{
+nome:"Laranja",
+icone:"🍊",
+inicio:5,
+fim:12,
+estados:["SP","MG","PR"],
+dica:"Excelente fonte de vitamina C."
+},
+
+{
+nome:"Banana",
+icone:"🍌",
+inicio:1,
+fim:12,
+estados:["RS","SC","PR","SP","MG","BA","PA"],
+dica:"Rica em potássio."
+},
+
+{
+nome:"Abacaxi",
+icone:"🍍",
+inicio:11,
+fim:3,
+estados:["PA","PB","BA","MG"],
+dica:"Auxilia a digestão por conter bromelina."
+},
+
+{
+nome:"Melancia",
+icone:"🍉",
+inicio:10,
+fim:3,
+estados:["RS","BA","GO","TO"],
+dica:"Hidratante e refrescante."
+},
+
+{
+nome:"Manga",
+icone:"🥭",
+inicio:10,
+fim:3,
+estados:["BA","PE","SP","MG"],
+dica:"Rica em vitaminas A e C."
+},
+
+{
+nome:"Morango",
+icone:"🍓",
+inicio:5,
+fim:10,
+estados:["RS","SP","MG"],
+dica:"Grande quantidade de antioxidantes."
+},
+
+{
+nome:"Limão",
+icone:"🍋",
+inicio:1,
+fim:12,
+estados:["SP","MG","BA"],
+dica:"Muito usado em sucos e temperos."
+},
+
+{
+nome:"Abacate",
+icone:"🥑",
+inicio:3,
+fim:9,
+estados:["SP","MG","PR","ES"],
+dica:"Fonte de gorduras saudáveis."
+}
+
+];
+
+function mesNaSafra(mes,inicio,fim){
+
+   if(inicio <= fim){
+      return mes >= inicio && mes <= fim;
+   }
+
+   return mes >= inicio || mes <= fim;
+}
+
+function pesquisar(){
+
+    const data = document.getElementById("data").value;
+    const estado = document.getElementById("estado").value;
+    const resultado = document.getElementById("resultado");
+
+    resultado.innerHTML="";
+
+    if(!data){
+        resultado.innerHTML =
+        '<div class="vazio">Selecione uma data.</div>';
+        return;
+    }
+
+    const mes = new Date(data).getMonth()+1;
+
+    const lista = frutas.filter(f => {
+
+        const safra = mesNaSafra(
+            mes,
+            f.inicio,
+            f.fim
+        );
+
+        const estadoOk =
+          !estado ||
+          f.estados.includes(estado);
+
+        return safra && estadoOk;
+    });
+
+    if(lista.length===0){
+        resultado.innerHTML =
+        '<div class="vazio">Nenhuma fruta encontrada.</div>';
+        return;
+    }
+
+    lista.forEach(f=>{
+
+        resultado.innerHTML += `
+        <div class="card">
+            <div class="icone">${f.icone}</div>
+            <h3>${f.nome}</h3>
+            <div class="estado">
+                Estados: ${f.estados.join(", ")}
+            </div>
+            <p>${f.dica}</p>
+        </div>
+        `;
+    });
+}
+
+</script>
+
+</body>
+</html>
