@@ -1,41 +1,52 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Frutas em Safra no Brasil</title>
+
+<title>Frutas da Estação Brasil</title>
 
 <style>
+
 :root{
-    --cor1:#2e7d32;
-    --cor2:#43a047;
-    --fundo:#f5f7fa;
-    --card:#ffffff;
+    --verde:#2e7d32;
+    --verde-claro:#43a047;
+    --fundo:#f4f6f8;
+}
+
+*{
+    box-sizing:border-box;
 }
 
 body{
     margin:0;
-    font-family:Segoe UI, Arial, sans-serif;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background:var(--fundo);
 }
 
 header{
-    background:linear-gradient(135deg,var(--cor1),var(--cor2));
+    background:linear-gradient(135deg,var(--verde),var(--verde-claro));
     color:white;
-    padding:30px;
     text-align:center;
+    padding:40px 20px;
 }
 
 header h1{
+    margin:0 0 10px;
+}
+
+header p{
     margin:0;
+    opacity:0.95;
 }
 
 .filtros{
-    max-width:900px;
+    max-width:1000px;
     margin:25px auto;
     background:white;
     padding:20px;
-    border-radius:15px;
+    border-radius:16px;
     box-shadow:0 2px 15px rgba(0,0,0,.08);
 
     display:grid;
@@ -43,22 +54,24 @@ header h1{
     gap:15px;
 }
 
-input, select{
+input,
+select{
+    width:100%;
     padding:12px;
     border:1px solid #ccc;
-    border-radius:8px;
+    border-radius:10px;
     font-size:15px;
 }
 
 button{
-    background:var(--cor1);
+    background:var(--verde);
     color:white;
     border:none;
-    border-radius:8px;
-    padding:12px 20px;
+    padding:12px 25px;
+    border-radius:10px;
     cursor:pointer;
-    font-size:15px;
     font-weight:bold;
+    transition:0.2s;
 }
 
 button:hover{
@@ -67,57 +80,97 @@ button:hover{
 
 .resultados{
     max-width:1200px;
-    margin:20px auto;
+    margin:20px auto 50px;
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
     gap:20px;
 }
 
 .card{
-    background:var(--card);
+    background:white;
     border-radius:18px;
     padding:20px;
-    box-shadow:0 4px 10px rgba(0,0,0,.08);
-    transition:.2s;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    transition:.3s;
+    border-top:5px solid var(--verde-claro);
 }
 
 .card:hover{
-    transform:translateY(-3px);
+    transform:translateY(-5px);
 }
 
 .icone{
-    font-size:50px;
+    font-size:56px;
 }
 
 .card h3{
     margin:10px 0;
-    color:#2e7d32;
+    color:var(--verde);
+}
+
+.status{
+    display:inline-block;
+    background:#c8e6c9;
+    color:#1b5e20;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.safra{
+    margin-top:15px;
+    background:#e8f5e9;
+    padding:10px;
+    border-radius:10px;
+    color:#1b5e20;
+    font-weight:600;
 }
 
 .estado{
-    font-size:13px;
+    margin-top:12px;
     color:#666;
+    font-size:14px;
+}
+
+.dica{
+    margin-top:15px;
+    padding-top:15px;
+    border-top:1px solid #eee;
+    color:#444;
+    line-height:1.5;
 }
 
 .vazio{
+    max-width:1000px;
+    margin:40px auto;
     text-align:center;
     color:#666;
-    margin-top:30px;
     font-size:18px;
 }
 
-@media(max-width:700px){
+@media (max-width:700px){
+
     .filtros{
         grid-template-columns:1fr;
     }
+
+    button{
+        width:100%;
+    }
+
 }
+
 </style>
 </head>
+
 <body>
 
 <header>
-    <h1>🍇 Frutas em Safra no Brasil</h1>
-    <p>Descubra quais frutas estão em melhor época para consumo</p>
+    <h1>🍇 Frutas da Estação Brasil</h1>
+    <p>
+        Descubra quais frutas estão em safra na data escolhida e na sua região.
+    </p>
 </header>
 
 <div class="filtros">
@@ -126,17 +179,21 @@ button:hover{
 
     <select id="estado">
         <option value="">Todos os estados</option>
+
         <option value="RS">Rio Grande do Sul</option>
         <option value="SC">Santa Catarina</option>
         <option value="PR">Paraná</option>
+
         <option value="SP">São Paulo</option>
         <option value="RJ">Rio de Janeiro</option>
         <option value="MG">Minas Gerais</option>
         <option value="ES">Espírito Santo</option>
+
         <option value="BA">Bahia</option>
         <option value="PE">Pernambuco</option>
         <option value="CE">Ceará</option>
         <option value="RN">Rio Grande do Norte</option>
+
         <option value="PA">Pará</option>
         <option value="AM">Amazonas</option>
     </select>
@@ -150,6 +207,22 @@ button:hover{
 <div id="resultado" class="resultados"></div>
 
 <script>
+
+const meses = [
+"",
+"Jan",
+"Fev",
+"Mar",
+"Abr",
+"Mai",
+"Jun",
+"Jul",
+"Ago",
+"Set",
+"Out",
+"Nov",
+"Dez"
+];
 
 const frutas = [
 
@@ -168,7 +241,7 @@ icone:"🍎",
 inicio:1,
 fim:4,
 estados:["RS","SC"],
-dica:"Boa fonte de fibras."
+dica:"Boa fonte de fibras e vitaminas."
 },
 
 {
@@ -186,7 +259,7 @@ icone:"🍌",
 inicio:1,
 fim:12,
 estados:["RS","SC","PR","SP","MG","BA","PA"],
-dica:"Rica em potássio."
+dica:"Rica em potássio e energia."
 },
 
 {
@@ -194,8 +267,8 @@ nome:"Abacaxi",
 icone:"🍍",
 inicio:11,
 fim:3,
-estados:["PA","PB","BA","MG"],
-dica:"Auxilia a digestão por conter bromelina."
+estados:["PA","BA","MG"],
+dica:"Contém bromelina, auxiliando na digestão."
 },
 
 {
@@ -203,8 +276,8 @@ nome:"Melancia",
 icone:"🍉",
 inicio:10,
 fim:3,
-estados:["RS","BA","GO","TO"],
-dica:"Hidratante e refrescante."
+estados:["RS","BA"],
+dica:"Muito refrescante e rica em água."
 },
 
 {
@@ -213,7 +286,7 @@ icone:"🥭",
 inicio:10,
 fim:3,
 estados:["BA","PE","SP","MG"],
-dica:"Rica em vitaminas A e C."
+dica:"Fonte importante de vitaminas A e C."
 },
 
 {
@@ -221,8 +294,8 @@ nome:"Morango",
 icone:"🍓",
 inicio:5,
 fim:10,
-estados:["RS","SP","MG"],
-dica:"Grande quantidade de antioxidantes."
+estados:["MG","SP","RS"],
+dica:"Possui grande quantidade de antioxidantes."
 },
 
 {
@@ -231,7 +304,7 @@ icone:"🍋",
 inicio:1,
 fim:12,
 estados:["SP","MG","BA"],
-dica:"Muito usado em sucos e temperos."
+dica:"Muito utilizado em sucos e temperos."
 },
 
 {
@@ -247,60 +320,84 @@ dica:"Fonte de gorduras saudáveis."
 
 function mesNaSafra(mes,inicio,fim){
 
-   if(inicio <= fim){
-      return mes >= inicio && mes <= fim;
-   }
+    if(inicio <= fim){
+        return mes >= inicio && mes <= fim;
+    }
 
-   return mes >= inicio || mes <= fim;
+    return mes >= inicio || mes <= fim;
 }
 
 function pesquisar(){
 
     const data = document.getElementById("data").value;
     const estado = document.getElementById("estado").value;
+
     const resultado = document.getElementById("resultado");
 
-    resultado.innerHTML="";
+    resultado.innerHTML = "";
 
     if(!data){
+
         resultado.innerHTML =
-        '<div class="vazio">Selecione uma data.</div>';
+        '<div class="vazio">📅 Selecione uma data para consultar as frutas da estação.</div>';
+
         return;
     }
 
-    const mes = new Date(data).getMonth()+1;
+    const mes = new Date(data).getMonth() + 1;
 
-    const lista = frutas.filter(f => {
+    const frutasEncontradas = frutas.filter(fruta => {
 
-        const safra = mesNaSafra(
+        const emSafra = mesNaSafra(
             mes,
-            f.inicio,
-            f.fim
+            fruta.inicio,
+            fruta.fim
         );
 
-        const estadoOk =
-          !estado ||
-          f.estados.includes(estado);
+        const estadoValido =
+            !estado ||
+            fruta.estados.includes(estado);
 
-        return safra && estadoOk;
+        return emSafra && estadoValido;
+
     });
 
-    if(lista.length===0){
+    if(frutasEncontradas.length === 0){
+
         resultado.innerHTML =
-        '<div class="vazio">Nenhuma fruta encontrada.</div>';
+        '<div class="vazio">😕 Nenhuma fruta encontrada para os filtros informados.</div>';
+
         return;
     }
 
-    lista.forEach(f=>{
+    frutasEncontradas.forEach(fruta => {
 
         resultado.innerHTML += `
         <div class="card">
-            <div class="icone">${f.icone}</div>
-            <h3>${f.nome}</h3>
-            <div class="estado">
-                Estados: ${f.estados.join(", ")}
+
+            <div class="icone">
+                ${fruta.icone}
             </div>
-            <p>${f.dica}</p>
+
+            <h3>${fruta.nome}</h3>
+
+            <div class="status">
+                ✅ Em Safra
+            </div>
+
+            <div class="safra">
+                📅 Safra: ${meses[fruta.inicio]} até ${meses[fruta.fim]}
+            </div>
+
+            <div class="estado">
+                📍 Estados produtores:<br>
+                ${fruta.estados.join(", ")}
+            </div>
+
+            <div class="dica">
+                💡 ${fruta.dica}
+            </div>
+
         </div>
         `;
     });
