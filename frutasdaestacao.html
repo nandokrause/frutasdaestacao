@@ -78,6 +78,29 @@ button:hover{
     background:#1b5e20;
 }
 
+.campo-data{
+    display:flex;
+    gap:8px;
+    min-width:0;
+}
+
+.campo-data input{
+    flex:1;
+    min-width:0;
+}
+
+button.botao-limpar{
+    background:#e8e8e8;
+    color:#333;
+    padding:12px 14px;
+    white-space:nowrap;
+    font-weight:600;
+}
+
+button.botao-limpar:hover{
+    background:#d6d6d6;
+}
+
 .resultados{
     max-width:1200px;
     margin:20px auto 50px;
@@ -269,8 +292,16 @@ button:hover{
         grid-template-columns:1fr;
     }
 
+    .campo-data{
+        width:100%;
+    }
+
     button{
         width:100%;
+    }
+
+    .campo-data .botao-limpar{
+        width:auto;
     }
 
 }
@@ -307,7 +338,10 @@ button:hover{
 
 <div class="filtros">
 
-    <input type="date" id="data">
+    <div class="campo-data">
+        <input type="date" id="data">
+        <button type="button" class="botao-limpar" onclick="limparData()">Limpar data</button>
+    </div>
 
     <select id="estado">
         <option value="">Todos os estados</option>
@@ -868,6 +902,11 @@ function mesNaSafra(mes,inicio,fim){
     }
 
     return mes >= inicio || mes <= fim;
+}
+
+function limparData(){
+    document.getElementById("data").value = "";
+    pesquisar();
 }
 
 function preencherFiltroFrutas(){
