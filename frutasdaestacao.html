@@ -149,6 +149,99 @@ button:hover{
     font-size:18px;
 }
 
+.hero{
+    position:relative;
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1b5e20 0%,
+            #2e7d32 35%,
+            #43a047 100%
+        );
+
+    color:white;
+    text-align:center;
+    padding:70px 20px 90px;
+}
+
+.hero::before{
+    content:"";
+    position:absolute;
+    width:350px;
+    height:350px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.08);
+    top:-120px;
+    left:-120px;
+}
+
+.hero::after{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+    bottom:-100px;
+    right:-80px;
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+    max-width:800px;
+    margin:auto;
+}
+
+.badge{
+    display:inline-block;
+    padding:8px 16px;
+    border-radius:30px;
+
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(5px);
+
+    margin-bottom:20px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.hero h1{
+    margin:0;
+    font-size:clamp(2rem,5vw,3.7rem);
+    font-weight:700;
+    line-height:1.1;
+}
+
+.hero p{
+    margin:20px auto 0;
+    max-width:700px;
+    font-size:1.15rem;
+    line-height:1.7;
+    opacity:0.95;
+}
+
+.hero-frutas{
+    margin-top:35px;
+    font-size:2rem;
+    letter-spacing:6px;
+    animation:flutuar 5s ease-in-out infinite;
+}
+
+@keyframes flutuar{
+    0%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-8px);
+    }
+    100%{
+        transform:translateY(0);
+    }
+}
+    
 @media (max-width:700px){
 
     .filtros{
@@ -166,11 +259,29 @@ button:hover{
 
 <body>
 
-<header>
-    <h1>🍇 Frutas da Estação Brasil</h1>
-    <p>
-        Descubra quais frutas estão em safra na data escolhida e na sua região.
-    </p>
+<header class="hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+            🍍 Calendário Brasileiro de Frutas
+        </div>
+
+        <h1>
+            Descubra as frutas da estação
+        </h1>
+
+        <p>
+            Consulte rapidamente quais frutas estão em safra em qualquer época do ano,
+            filtre por estado e encontre opções mais frescas, saborosas e econômicas.
+        </p>
+
+    </div>
+
+    <div class="hero-frutas">
+        🍎 🍌 🍇 🥭 🍊 🍓 🍍 🥑 🍉 🍋
+    </div>
+
 </header>
 
 <div class="filtros">
