@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 
 <head>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#4b7d3c">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -1024,6 +1027,17 @@ preencherFiltroFrutas();
 document.getElementById("data").value =
     new Date().toLocaleDateString("en-CA");
 
+</script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .catch(error => {
+          console.error("Erro ao registrar service worker:", error);
+        });
+    });
+  }
 </script>
 
 </body>
