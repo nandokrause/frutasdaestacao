@@ -277,6 +277,41 @@ button.botao-limpar:hover{
     border:1px solid #ffe082;
 }    
 
+/* Botão discreto de instalação PWA no topo */
+.btn-instalar-top {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: none; /* Escondido por padrão, exibido via JS */
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.btn-instalar-top:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 700px) {
+    .btn-instalar-top {
+        top: 15px;
+        right: 15px;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
 @keyframes flutuar{
     0%{
         transform:translateY(0);
@@ -315,6 +350,11 @@ button.botao-limpar:hover{
 <body>
 
 <header class="hero">
+
+     <!-- Botão Discreto de Instalação -->
+    <button id="btnInstalar" class="btn-instalar-top" type="button">
+        📥 Instalar App
+    </button>
 
     <div class="hero-content">
 
@@ -1038,6 +1078,46 @@ document.getElementById("data").value =
         });
     });
   }
+
+// Lógica para controle do botão de instalação PWA
+let deferredPrompt;
+const btnInstalar = document.getElementById('btnInstalar');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Impede a barra padrão do Chrome
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Exibe o botão elegante no topo
+    if (btnInstalar) {
+        btnInstalar.style.display = 'inline-flex';
+    }
+});
+
+if (btnInstalar) {
+    btnInstalar.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        // Esconde o botão
+        btnInstalar.style.display = 'none';
+        
+        // Exibe o prompt nativo do navegador
+        deferredPrompt.prompt();
+        
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Resultado da instalação: ${outcome}`);
+        
+        deferredPrompt = null;
+    });
+}
+
+// Oculta caso o app seja instalado com sucesso
+window.addEventListener('appinstalled', () => {
+    if (btnInstalar) {
+        btnInstalar.style.display = 'none';
+    }
+    console.log('PWA instalado com sucesso!');
+});
 </script>
 
 </body>
